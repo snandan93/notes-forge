@@ -30,4 +30,4 @@ def run_image(llm: LLM, image_path: str | Path) -> ReaderOutput:
         {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": data}},
         {"type": "text", "text": prompt},
     ]
-    return llm.call_json("reader", content, ReaderOutput)  # type: ignore[arg-type]
+    return llm.call_json("reader", content, ReaderOutput)
