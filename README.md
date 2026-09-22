@@ -71,9 +71,10 @@ npm install -g @mermaid-js/mermaid-cli
 ## Usage
 
 ```bash
-notes-forge run examples/tcp_notes.md
+notes-forge run evals/cases/tcp_notes.md
 notes-forge run lecture-photo.jpg -o lecture.md
 notes-forge lint-diagram diagram.mmd
+notes-forge eval               # run the sample notes in evals/cases
 ```
 
 Every run writes a folder under `runs/` with each agent's prompt, raw reply and parsed output,
@@ -113,7 +114,7 @@ the retry loop (with a fake client), diagram linting, the merge rule and placeho
 
 ## Roadmap
 
-- Eval set: 20 real notes + hand-written "perfect" outputs, rerun after every prompt change
+- Grow `evals/cases` to 20 real notes with hand-written reference outputs
 - Render Mermaid to SVG in an HTML export
 - Streamlit UI with side-by-side before/after
 

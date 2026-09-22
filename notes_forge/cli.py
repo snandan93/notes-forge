@@ -10,7 +10,7 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
-from notes_forge import __version__, diagrams, pipeline
+from notes_forge import __version__, diagrams, evals, pipeline
 from notes_forge.agents.reader import IMAGE_TYPES
 
 app = typer.Typer(add_completion=False, help="Turn rough study notes into clear, sourced notes.")
@@ -54,6 +54,32 @@ def lint_diagram(path: Annotated[Path, typer.Argument(exists=True)]) -> None:
             console.print(f"[red]✗[/] {p}")
         raise typer.Exit(1)
     console.print("[green]✓[/] diagram looks good")
+
+
+@app.command("eval")
+def run_evals(
+    cases: Annotated[Path, typer.Option("--cases", help="Folder of sample notes")] = Path(
+        "evals/cases"
+    ),
+    keyword: Annotated[str | None, typer.Option("-k", help="Only cases matching this")] = None,
+) -> None:
+    """Run the pipeline on every sample note and record scores."""
+    paths = evals.find_cases(cases, keyword)
+    if not paths:
+        console.print("[yellow]no cases found[/]")
+        raise typer.Exit(1)
+    root = cases.parent
+    results = []
+    with console.status("Starting…") as status:
+        for path in paths:
+            results.append(
+                evals.run_case(path, root / "out", lambda msg: status.update(msg + "…"))
+            )
+    evals.write_results(results, root / "results.csv")
+    for r in results:
+        mark = "[green]✓[/]" if r.passed else "[yellow]![/]"
+        console.print(f"{mark} {r.case}: score {r.score}, {r.attempts} attempt(s)")
+    console.print(evals.summary(results))
 
 
 @app.command()
