@@ -93,10 +93,12 @@ def run(
 ) -> Result:
     if not notes and not image:
         raise ValueError("pass notes text or an image path")
-    logger = RunLogger()
-    llm = llm or LLM(logger=logger)
-    if llm.logger is None:
-        llm.logger = logger
+    # One run folder per run: reuse the caller's logger if their LLM already has one.
+    if llm is None:
+        llm = LLM(logger=RunLogger())
+    elif llm.logger is None:
+        llm.logger = RunLogger()
+    logger = llm.logger
 
     progress("Reading your notes")
     reading = reader.run_image(llm, image) if image else reader.run(llm, notes or "")
