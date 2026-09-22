@@ -65,7 +65,7 @@ def render_mermaid(code: str) -> list[str]:
         src.write_text(_strip_fence(code))
         proc = subprocess.run(
             [mmdc, "-i", str(src), "-o", str(Path(tmp) / "d.svg"), "--quiet"],
-            capture_output=True, text=True, timeout=60,
+            capture_output=True, text=True, timeout=60, check=False,
         )
     if proc.returncode != 0:
         return [f"mermaid render error: {(proc.stderr or proc.stdout).strip()[:300]}"]
