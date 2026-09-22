@@ -118,7 +118,7 @@ class LLM:
     def call_json(
         self,
         agent: str,
-        prompt: str,
+        prompt: str | list[dict[str, Any]],
         schema: type[T],
         *,
         system: str | None = None,
